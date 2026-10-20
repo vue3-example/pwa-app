@@ -4,10 +4,15 @@ import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   base: "/pwa-app/", // "/저장소이름/"
+  // npm run dev, npm run preview 에서 /api 요청을 Express 서버로 넘김
+  server: { proxy: { "/api": "http://localhost:3001" } },
+  preview: { proxy: { "/api": "http://localhost:3001" } },
   plugins: [
     react(),
     VitePWA({
       registerType: "autoUpdate", // 새 버전이 배포되면 서비스 워커를 자동 갱신
+      // /api 는 화면 이동으로 보고 index.html 로 바꿔치기하지 않음
+      workbox: { navigateFallbackDenylist: [/^\/api/] },
       includeAssets: ["favicon.svg"], // 미리 캐시해 둘 public 폴더의 파일
       manifest: {
         name: "PWA 연습 앱", // 설치 안내창과 시작 화면에 쓰이는 전체 이름
